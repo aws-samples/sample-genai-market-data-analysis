@@ -44,3 +44,8 @@ Compare the returns of Amazon, Apple and Google
 Whats the correlation between Apple and Amazon? 
 
 The next step is to hook the whole universe of stocks and PySpark to have the agent running complex calcudlations.
+
+
+### Tasks:
+1. Adding PySpark and support using the aws_agents/parquet_agent.py
+2. Adding FDC3 support for the front-end
