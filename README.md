@@ -8,6 +8,10 @@ python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ````
 
+**Create a dot env file .env with the following content and add your bucket:**
+````
+S3_CHART_BUCKET=s3://add_your_own_bucket_here
+````
 ### Installation process for the frontend
 
 **Inside the front2 folder:**

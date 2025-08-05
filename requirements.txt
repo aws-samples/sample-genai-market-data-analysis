@@ -6,3 +6,4 @@ bedrock-agentcore
 bedrock-agentcore-starter-toolkit
 flask-cors
 plotly
+python-dotenv

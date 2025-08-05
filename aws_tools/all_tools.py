@@ -1,4 +1,11 @@
 from strands import Agent, tool
+import requests
+import os
+from strands.models import BedrockModel
+import boto3
+
+S3_CHART_BUCKET = os.getenv('S3_CHART_BUCKET')
+
 
 @tool
 def get_news_for_stock(stock_symbol):
@@ -42,6 +49,7 @@ def get_financial_info_for_stock(stock_symbol):
 
 @tool
 def stock_performance_returns(stock_symbol):
+
     API_BASE_URL = 'https://api.rrllgo.com'
     API_KEY = 'default-api-key'
     response = requests.get(f'{API_BASE_URL}/returns/{stock_symbol}',
@@ -133,7 +141,7 @@ def chart_generator(data, question):
     try:
         agent = Agent(
             model=model,
-            system_prompt="""
+            system_prompt=f"""
             ## Task
             You are an expert data visualization developer who creates precise, effective charts based on user questions and datasets.
 
@@ -141,12 +149,12 @@ def chart_generator(data, question):
             Your goal is to generate visualization code that:
             1. Accurately represents the data
             2. Answers the user's question effectively
-            3. Produces a clean PNG output saved to S3 via code with boto3
+            3. Produces a clean PNG output saved to S3 via code with boto3 into {S3_CHART_BUCKET}
 
             ## Technical Requirements
             <visualization_specs>
             - Use Plotly (version 5.22.0) for all visualizations
-            - Copy the PNG format to S3 bucket: `s3://news-output-processed`
+            - Copy the PNG format to S3 bucket: ``
             - Return a JSON response with the S3 path to the saved image
             </visualization_specs>
 
@@ -155,7 +163,7 @@ def chart_generator(data, question):
             2. **Select Visualization**: Choose the most appropriate chart type and scale to represent the data
             3. **Generate Code**: Write clean, efficient Plotly code (no explanations or markdown)
             4. **Execute**: Use the code_execution_tool function to run your code
-            5. **Save Output**: Ensure the visualization is saved to the specified S3 bucket
+            5. **Save Output**: Ensure the visualization is saved to the specified S3 bucket {S3_CHART_BUCKET}
             6. **Return Path**: Provide the S3 path in JSON format
 
             ## Code Guidelines

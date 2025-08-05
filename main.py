@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from strands import Agent, tool
 from strands_tools import calculator  # Import the calculator tool
 import argparse
@@ -14,6 +17,7 @@ import base64
 import os
 from datetime import datetime
 from aws_tools.all_tools import *
+
 
 app = BedrockAgentCoreApp(debug=True)
 app.add_middleware(
