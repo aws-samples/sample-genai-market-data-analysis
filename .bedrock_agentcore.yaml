@@ -1,0 +1,25 @@
+default_agent: main
+agents:
+  main:
+    name: main
+    entrypoint: main.py
+    platform: linux/arm64
+    container_runtime: podman
+    aws:
+      execution_role: arn:aws:iam::763406250311:role/AgentCoreRoole
+      account: '763406250311'
+      region: us-east-1
+      ecr_repository: 763406250311.dkr.ecr.us-east-1.amazonaws.com/bedrock_agentcore-main
+      ecr_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+    bedrock_agentcore:
+      agent_id: main-3LjbueDZVg
+      agent_arn: arn:aws:bedrock-agentcore:us-east-1:763406250311:runtime/main-3LjbueDZVg
+      agent_session_id: 5480f37a-7a5d-49d6-b031-316cc9fc7374
+    authorizer_configuration: null
+    oauth_configuration: null
