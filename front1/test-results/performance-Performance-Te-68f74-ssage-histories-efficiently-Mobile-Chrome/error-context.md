@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- link "Skip to main content":
+  - /url: "#main-content"
+- main:
+  - status
+  - heading "Next.js Chat App" [level=1]
+  - paragraph: Send messages to local or remote endpoints
+  - log "Chat message history":
+    - list "40 messages":
+      - listitem "user message from 12:23 PM": Message 1 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 1 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 2 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 2 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 3 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 3 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 4 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 4 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 5 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 5 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 6 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 6 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 7 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 7 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 8 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 8 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 9 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 9 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 10 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 10 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 11 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 11 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 12 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 12 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 13 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 13 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 14 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 14 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 15 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 15 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 16 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 16 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 17 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 17 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 18 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 18 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 19 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 19 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Message 20 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Message 20 12:23 PM(local)"
+  - text: Type your message
+  - textbox "Message input"
+  - text: Press Enter to send, Shift+Enter for new line
+  - button "Send message to local endpoint at 127.0.0.1:8080" [disabled]: Send to Local
+  - button "Send message to remote endpoint" [disabled]: Send to Remote
+  - button "Clear chat history": Clear Chat
+- alert
+```

@@ -1,22 +1,18 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
-
+from strands.multiagent import Swarm, GraphBuilder
 from strands import Agent, tool
 from strands_tools import calculator  # Import the calculator tool
 import argparse
 import json
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from bedrock_agentcore.tools.code_interpreter_client import CodeInterpreter, code_session
-from strands.models import BedrockModel
 import requests
-
 from starlette.middleware.cors import CORSMiddleware
-
 import boto3
-import base64
-import os
 from datetime import datetime
-from aws_tools.all_tools import *
+from aws_agents.all_agents import financial_analyst_agent, coding_agent, chart_agent, final_response_agent
+import time
 
 
 app = BedrockAgentCoreApp(debug=True)
@@ -29,65 +25,22 @@ app.add_middleware(
 )
 
 
-system_prompt = """
-# Adaptive financial Assistant Response System
-
-## Task Objective
-You are an adaptive AI assistant that tailors responses based on the user's technical sophistication level. Your goal is to provide accurate, appropriately complex information that matches the user's knowledge level while utilizing data tools when necessary.
-
-## Response Guidelines
-1. **Assess Query Sophistication**:
-   - Analyze the technical complexity and domain knowledge demonstrated in the user's query
-   - Identify industry-specific terminology or concepts mentioned
-   - Do not add any other text preamble or header outside the json format required on the output.
-
-2. **Match Response Complexity**:
-   - <technical_queries>For queries containing industry jargon or advanced concepts, respond with professional-level analysis using appropriate technical terminology</technical_queries>
-   - <basic_queries>For basic or general queries, provide clear explanations with minimal jargon and accessible language</basic_queries>
-   - Always maintain accuracy regardless of explanation complexity
-
-3. **Data and Visualization Protocol**:
-   - For any request requiring data analysis, utilize available tools to retrieve and process relevant information
-   - When appropriate, reference specific information from the provided context
-   - Generate visualizations using the plotly==5.22.0 library when:
-     - Visual representation would enhance understanding of the data
-     - The user explicitly requests a chart
-     - Complex data relationships need to be illustrated
-     - The chart tool returns a signed url of the chart on S3.
-
-4. **DONT DO**: add any header, preamble, or intro because it breaks the output, make sure the final response is valid json
-
-## Output Format JSON:
-Your response must be formatted as a valid JSON object.
-- The "text" field must contain your complete response formatted in Markdown
-- The "charts" field must contain an array of the s3 signed url of the chart images (if any were generated), or an empty array if no charts were created
-- stringify the whole response and scape the characters that break the json format
-
-{{"text": "Your final response in Markdown format for enhanced readability",
-    "charts": ["s3_signed_url", "s3_signed_url", ...]}}
-
-"""
-
-
-
-
-
-
-
-
-
-model_id = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
-model = BedrockModel(
-    model_id=model_id,
-)
-agent = Agent(
-    model=model,
-    tools=[calculator, smart_responses, stock_performance_returns, get_news_for_stock,
-           get_technical_analysis_for_stock, get_financial_info_for_stock, chart_generator],
-    system_prompt=system_prompt
-
+swarm = Swarm(
+    [financial_analyst_agent, coding_agent, chart_agent],
+    max_handoffs=20,
+    max_iterations=20,
+    execution_timeout=1800.0,  # 15 minutes
+    node_timeout=600.0,       # 5 minutes per agent
+    repetitive_handoff_detection_window=8,  # There must be >= 3 unique agents in the last 8 handoffs
+    repetitive_handoff_min_unique_agents=3
 )
 
+builder = GraphBuilder()
+builder.add_node(swarm, "research")
+builder.add_node(final_response_agent, "output")
+builder.add_edge("research", "output")
+
+graph = builder.build()
 
 @app.entrypoint
 def strands_agent_bedrock(payload):
@@ -95,12 +48,15 @@ def strands_agent_bedrock(payload):
     Invoke the agent with a payload
     """
     user_input = payload.get("prompt")
-    print("User input:", user_input)
-    response = agent(user_input)
+    today_date = time.ctime()
+    user_input = user_input + f"\n###For clarification today date is: {today_date}"
+
+    result = graph(user_input)
+    from pprint import pprint
     print("--------------------- RESPONSE -------------------")
-    print(response.message['content'][0]['text'])
+    pprint(result)
     print("--------------------- END RESPONSE -------------------")
-    return response.message['content'][0]['text']
+    return result.results["output"].result
 
 
 if __name__ == "__main__":

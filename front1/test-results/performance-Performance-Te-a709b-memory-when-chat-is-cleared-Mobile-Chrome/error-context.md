@@ -1,0 +1,61 @@
+# Page snapshot
+
+```yaml
+- link "Skip to main content":
+  - /url: "#main-content"
+- main:
+  - status
+  - heading "Next.js Chat App" [level=1]
+  - paragraph: Send messages to local or remote endpoints
+  - log "Chat message history":
+    - list "42 messages":
+      - listitem "user message from 12:23 PM": Cleanup test message 1 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 1 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 2 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 2 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 3 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 3 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 4 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 4 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 5 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 5 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 6 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 6 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 7 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 7 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 8 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 8 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 9 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 9 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 10 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 10 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 11 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 11 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 12 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 12 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 13 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 13 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 14 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 14 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 15 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 15 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 16 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 16 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 17 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 17 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 18 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 18 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 19 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 19 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 20 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 20 12:23 PM(local)"
+      - listitem "user message from 12:23 PM": Cleanup test message 21 12:23 PM
+      - listitem "assistant message from 12:23 PM": "Response to: Cleanup test message 21 12:23 PM(local)"
+  - text: Type your message
+  - textbox "Message input"
+  - text: Press Enter to send, Shift+Enter for new line
+  - button "Send message to local endpoint at 127.0.0.1:8080" [disabled]: Send to Local
+  - button "Send message to remote endpoint" [disabled]: Send to Remote
+  - button "Clear chat history": Clear Chat
+- alert
+```

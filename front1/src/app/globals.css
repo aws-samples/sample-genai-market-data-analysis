@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Financial Research Tool Color Scheme */
+:root {
+  /* Primary Financial Colors */
+  --primary-navy: 15, 23, 42;        /* slate-900 */
+  --primary-blue: 30, 58, 138;       /* blue-900 */
+  --accent-blue: 59, 130, 246;       /* blue-500 */
+  --light-blue: 219, 234, 254;       /* blue-100 */
+  
+  /* Neutral Colors */
+  --background-primary: 248, 250, 252;   /* slate-50 */
+  --background-secondary: 241, 245, 249; /* slate-100 */
+  --surface-white: 255, 255, 255;
+  --border-light: 226, 232, 240;     /* slate-200 */
+  --border-medium: 203, 213, 225;    /* slate-300 */
+  
+  /* Text Colors */
+  --text-primary: 15, 23, 42;        /* slate-900 */
+  --text-secondary: 71, 85, 105;     /* slate-600 */
+  --text-muted: 148, 163, 184;       /* slate-400 */
+  
+  /* Status Colors */
+  --success-green: 34, 197, 94;      /* green-500 */
+  --warning-amber: 245, 158, 11;     /* amber-500 */
+  --error-red: 239, 68, 68;          /* red-500 */
+  
+  /* Financial Accent Colors */
+  --gold-accent: 217, 119, 6;        /* amber-600 */
+  --silver-accent: 148, 163, 184;    /* slate-400 */
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: rgb(var(--text-primary));
+  background: linear-gradient(135deg, 
+    rgb(var(--background-primary)) 0%, 
+    rgb(var(--background-secondary)) 100%);
+  min-height: 100vh;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Professional transitions for financial applications */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition-duration: 200ms;
+}
+
+/* Professional focus styles */
+*:focus-visible {
+  outline: 2px solid rgb(var(--accent-blue));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Professional typography */
+.financial-heading {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: rgb(var(--primary-navy));
+}
+
+.financial-subheading {
+  font-weight: 500;
+  color: rgb(var(--text-secondary));
+}
+
+.financial-body {
+  color: rgb(var(--text-primary));
+  line-height: 1.6;
+}
+
+.financial-caption {
+  font-size: 0.875rem;
+  color: rgb(var(--text-muted));
+  font-weight: 500;
+}
+
+/* Loading animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Professional button styles */
+.btn-primary {
+  background: linear-gradient(135deg, rgb(var(--primary-blue)), rgb(var(--accent-blue)));
+  color: white;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+  background: rgb(var(--surface-white));
+  color: rgb(var(--text-primary));
+  border: 1px solid rgb(var(--border-medium));
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: rgb(var(--background-secondary));
+  border-color: rgb(var(--accent-blue));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, rgb(var(--success-green)), rgb(34, 197, 94));
+  color: white;
+  font-weight: 600;
+}
+
+.btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, rgb(var(--error-red)), rgb(239, 68, 68));
+  color: white;
+  font-weight: 600;
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Professional animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-slide-in {
+  animation: slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes subtleShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.error-shake {
+  animation: subtleShake 0.4s ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+/* Professional card styles */
+.financial-card {
+  background: rgb(var(--surface-white));
+  border: 1px solid rgb(var(--border-light));
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.financial-card:hover {
+  border-color: rgb(var(--border-medium));
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Status indicators */
+.status-online {
+  background: rgb(var(--success-green));
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.status-offline {
+  background: rgb(var(--text-muted));
+  box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.2);
+}
+
+.status-error {
+  background: rgb(var(--error-red));
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Professional image styling for financial charts and visualizations */
+.financial-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 16px auto;
+  display: block;
+  background: rgb(var(--surface-white));
+  border: 1px solid rgb(var(--border-light));
+}
+
+/* Enhanced user message visibility - Force white text for all elements */
+.user-message-content,
+.user-message-content *,
+.user-message-content p,
+.user-message-content span,
+.user-message-content div,
+.user-message-content h1,
+.user-message-content h2,
+.user-message-content h3,
+.user-message-content h4,
+.user-message-content h5,
+.user-message-content h6,
+.user-message-content li,
+.user-message-content ul,
+.user-message-content ol,
+.user-message-content strong,
+.user-message-content em,
+.user-message-content b,
+.user-message-content i,
+.user-message-content a,
+.user-message-content blockquote {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Override prose styles specifically for user messages */
+.user-message-content.prose,
+.user-message-content.prose * {
+  color: white !important;
+}
+
+/* Ensure links are visible in user messages */
+.user-message-content a {
+  color: #93c5fd !important; /* light blue for links */
+  text-decoration: underline !important;
+}
+
+.financial-image:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Fallback for broken images */
+.financial-image {
+  background-color: rgb(var(--background-secondary));
+}
+
+.financial-image:not([src]) {
+  display: none;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
