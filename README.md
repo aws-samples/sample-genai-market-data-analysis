@@ -27,14 +27,34 @@ source venv/bin/activate
 python main.py
 ````
 
+
+
 ### Running the frontend locally:
+
+In the folder front1 run the following commands:
+
+```bash
+npm run dev
+```
+
+Open [http://127.0.0.1:3000](http://127.0.0.1:3000) with your browser to see the result.
+
+### Building
+
+Build the application for production:
+
+```bash
+npm run build
+```
+
+### Running the frontend locally: [Deprecated]
 **inside the main folder**
 ````bash
 source venv/bin/activate
 python app.py
 ````
 
-Go to http://127.0.0.1:5000
+
 
 
 ### What to expect:
