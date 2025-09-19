@@ -7,15 +7,17 @@ export interface Message {
   content: string;
   type: 'user' | 'assistant' | 'error';
   timestamp: Date;
-  source?: 'local' | 'remote';
+  source?: 'local' | 'remote' | 'bedrock';
 }
 
 export interface ChatRequest {
-  prompt: string;
+  message: string;
 }
 
 export interface ChatResponse {
   response?: string;
+  timestamp?: string;
+  source?: string;
   error?: string;
 }
 

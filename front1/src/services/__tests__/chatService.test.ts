@@ -38,15 +38,15 @@ describe('ChatService', () => {
 
   beforeEach(() => {
     chatService = new ChatService();
-    
+
     // Mock AbortController
     mockAbortController = {
       abort: jest.fn(),
       signal: {} as AbortSignal,
     };
-    
+
     global.AbortController = jest.fn(() => mockAbortController) as any;
-    
+
     // Reset mocks
     mockFetch.mockReset();
     mockSetTimeout.mockReset();
@@ -64,7 +64,7 @@ describe('ChatService', () => {
     it('should initialize with default configuration', () => {
       const service = new ChatService();
       const config = service.getConfig();
-      
+
       expect(config.localEndpoint).toBe('http://127.0.0.1:8080/invocations');
       expect(config.remoteEndpoint).toBe('');
       expect(config.timeout).toBe(900000); // 15 minutes
@@ -80,10 +80,10 @@ describe('ChatService', () => {
         timeout: 30000,
         headers: { 'Authorization': 'Bearer token' },
       };
-      
+
       const service = new ChatService(customConfig);
       const config = service.getConfig();
-      
+
       expect(config.localEndpoint).toBe(customConfig.localEndpoint);
       expect(config.remoteEndpoint).toBe(customConfig.remoteEndpoint);
       expect(config.timeout).toBe(customConfig.timeout);
@@ -126,7 +126,7 @@ describe('ChatService', () => {
       await expect(chatService.sendToLocal('')).rejects.toThrow(
         new ChatServiceError('Message cannot be empty', 'config')
       );
-      
+
       await expect(chatService.sendToLocal('   ')).rejects.toThrow(
         new ChatServiceError('Message cannot be empty', 'config')
       );
@@ -136,7 +136,7 @@ describe('ChatService', () => {
       const errorResponse: ChatResponse = {
         error: 'Internal server error',
       };
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(errorResponse),
@@ -150,7 +150,7 @@ describe('ChatService', () => {
     it('should handle HTTP error status', async () => {
       // Mock delay to avoid actual delays
       jest.spyOn(chatService as any, 'delay').mockResolvedValue(undefined);
-      
+
       mockFetch.mockResolvedValue({
         ok: false,
         status: 500,
@@ -165,7 +165,7 @@ describe('ChatService', () => {
     it('should handle network error', async () => {
       // Mock delay to avoid actual delays
       jest.spyOn(chatService as any, 'delay').mockResolvedValue(undefined);
-      
+
       mockFetch.mockRejectedValue(new TypeError('Failed to fetch'));
 
       await expect(chatService.sendToLocal('test')).rejects.toThrow(
@@ -176,7 +176,7 @@ describe('ChatService', () => {
     it('should handle timeout', async () => {
       // Mock delay to avoid actual delays
       jest.spyOn(chatService as any, 'delay').mockResolvedValue(undefined);
-      
+
       const abortError = new Error('AbortError');
       abortError.name = 'AbortError';
       mockFetch.mockRejectedValue(abortError);
@@ -236,7 +236,7 @@ describe('ChatService', () => {
 
     it('should throw error when remote endpoint not configured', async () => {
       const serviceWithoutRemote = new ChatService();
-      
+
       await expect(serviceWithoutRemote.sendToRemote('test')).rejects.toThrow(
         new ChatServiceError('Remote endpoint not configured', 'config')
       );
@@ -263,10 +263,10 @@ describe('ChatService', () => {
         timeout: 60000,
         headers: { 'Authorization': 'Bearer new-token' },
       };
-      
+
       chatService.updateConfig(newConfig);
       const config = chatService.getConfig();
-      
+
       expect(config.timeout).toBe(60000);
       expect(config.headers).toEqual({
         'Content-Type': 'application/json',
@@ -279,11 +279,11 @@ describe('ChatService', () => {
       chatService.updateConfig({
         headers: { 'X-Custom-Header': 'value1' },
       });
-      
+
       chatService.updateConfig({
         headers: { 'Authorization': 'Bearer token' },
       });
-      
+
       const config = chatService.getConfig();
       expect(config.headers).toEqual({
         'Content-Type': 'application/json',
@@ -341,7 +341,7 @@ describe('ChatService', () => {
     it('should retry on timeout errors', async () => {
       const timeoutError = new Error('AbortError');
       timeoutError.name = 'AbortError';
-      
+
       mockFetch
         .mockRejectedValueOnce(timeoutError)
         .mockResolvedValueOnce({
@@ -405,7 +405,7 @@ describe('ChatService', () => {
       const originalDelay = (chatService as any).delay;
       const delaySpy = jest.fn().mockResolvedValue(undefined);
       (chatService as any).delay = delaySpy;
-      
+
       mockFetch.mockRejectedValue(new TypeError('Failed to fetch'));
 
       try {
@@ -416,7 +416,7 @@ describe('ChatService', () => {
 
       expect(delaySpy).toHaveBeenCalledWith(100); // First retry: 100ms
       expect(delaySpy).toHaveBeenCalledWith(200); // Second retry: 200ms
-      
+
       // Restore original method
       (chatService as any).delay = originalDelay;
     });
@@ -425,7 +425,7 @@ describe('ChatService', () => {
   describe('ChatServiceError', () => {
     it('should create error with all properties', () => {
       const error = new ChatServiceError('Test error', 'network', 404, true);
-      
+
       expect(error.message).toBe('Test error');
       expect(error.type).toBe('network');
       expect(error.statusCode).toBe(404);
@@ -436,7 +436,7 @@ describe('ChatService', () => {
 
     it('should create error without status code and default retryable to false', () => {
       const error = new ChatServiceError('Test error', 'timeout');
-      
+
       expect(error.message).toBe('Test error');
       expect(error.type).toBe('timeout');
       expect(error.statusCode).toBeUndefined();
@@ -445,7 +445,7 @@ describe('ChatService', () => {
 
     it('should create retryable error', () => {
       const error = new ChatServiceError('Test error', 'network', undefined, true);
-      
+
       expect(error.isRetryable).toBe(true);
     });
   });

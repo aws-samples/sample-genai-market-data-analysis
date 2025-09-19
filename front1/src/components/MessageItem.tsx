@@ -94,7 +94,11 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLatest = fa
               <span>{formatTimestamp(message.timestamp)}</span>
               {message.source && (
                 <div className="flex items-center space-x-1">
-                  <div className={`w-2 h-2 rounded-full ${message.source === 'local' ? 'bg-blue-400' : 'bg-green-400'}`}></div>
+                  <div className={`w-2 h-2 rounded-full ${
+                    message.source === 'local' ? 'bg-blue-400' : 
+                    message.source === 'bedrock' ? 'bg-slate-900' : 
+                    'bg-green-400'
+                  }`}></div>
                   <span className="capitalize">{message.source}</span>
                 </div>
               )}
@@ -122,16 +126,16 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, isLatest = fa
                   </div>
                 );
               } else {
-                // For assistant/error messages, clean HTML and render properly
-                const cleanContent = content
-                  .replace(/>\s+</g, '><') // Remove whitespace between tags
-                  .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
-                  .trim();
-
+                // For all assistant/error messages, render as HTML
                 return (
                   <div
-                    // className="text-slate-700 prose prose-sm max-w-none [&>*]:my-2 [&>p]:my-2 [&>p]:text-slate-700 [&>h1]:text-lg [&>h1]:font-semibold [&>h1]:text-slate-900 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:text-slate-900 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:text-slate-900 [&>ul]:pl-4 [&>ol]:pl-4 [&>li]:mb-1 [&>li]:text-slate-700 [&>blockquote]:border-l-4 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:border-slate-300 [&>blockquote]:text-slate-600 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-xs [&>code]:font-mono [&>code]:bg-slate-100 [&>code]:text-slate-800 [&>pre]:p-3 [&>pre]:rounded [&>pre]:overflow-x-auto [&>pre]:text-xs [&>pre]:font-mono [&>pre]:bg-slate-100 [&>pre]:text-slate-800 [&>img]:max-w-full [&>img]:h-auto [&>img]:rounded-lg [&>img]:shadow-md [&>img]:my-4 [&>img]:mx-auto [&>img]:block [&>table]:w-full [&>table]:border-collapse [&>td]:border [&>td]:p-2 [&>td]:border-slate-300 [&>td]:text-slate-700 [&>th]:border [&>th]:p-2 [&>th]:border-slate-300 [&>th]:bg-slate-100 [&>th]:text-slate-900 [&>th]:font-semibold [&>strong]:text-slate-900 [&>em]:text-slate-600 [&>a]:text-blue-600 [&>a]:underline"
-                    dangerouslySetInnerHTML={{ __html: cleanContent }}
+                    className="text-slate-700 leading-relaxed"
+                    style={{ 
+                      lineHeight: '1.6',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: content }}
                   />
                 );
               }

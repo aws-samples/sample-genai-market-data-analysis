@@ -4,10 +4,12 @@ import React, { useCallback, useEffect } from 'react';
 import { ChatWindow } from './ChatWindow';
 import { MessageInput } from './MessageInput';
 import { ActionButtons } from './ActionButtons';
+import { UserProfile } from './UserProfile';
+import { BuildInfo } from './BuildInfo';
 import { useChatState } from '../hooks/useChatState';
 import { useAnnouncements } from '../hooks/useAnnouncements';
-import { chatService } from '../services/chatService';
-import type { ChatServiceError } from '../services/chatService';
+import { ChatService, type ChatServiceError } from '../services/chatService';
+import { useConfig } from './ConfigProvider';
 
 interface ErrorInfo {
   message: string;
@@ -15,7 +17,7 @@ interface ErrorInfo {
   userFriendlyMessage: string;
 }
 
-const formatErrorMessage = (error: unknown, endpoint: 'local' | 'remote'): ErrorInfo => {
+const formatErrorMessage = (error: unknown, endpoint: 'local' | 'remote' | 'bedrock'): ErrorInfo => {
   if (error && typeof error === 'object' && 'type' in error && 'name' in error && error.name === 'ChatServiceError') {
     const chatError = error as ChatServiceError;
     
@@ -106,10 +108,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
   } = useChatState();
 
   const { announce, AnnouncementRegion } = useAnnouncements();
+  const { config } = useConfig();
 
   const [lastFailedRequest, setLastFailedRequest] = React.useState<{
     message: string;
-    endpoint: 'local' | 'remote';
+    endpoint: 'local' | 'remote' | 'bedrock';
     isRetryable: boolean;
   } | null>(null);
 
@@ -138,8 +141,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
     }
   }, [currentInput, error, clearError]);
 
-  const handleSendMessage = useCallback(async (message: string, endpoint: 'local' | 'remote') => {
-    if (!message.trim() || isLoading) return;
+  const handleSendMessage = useCallback(async (message: string, endpoint: 'local' | 'remote' | 'bedrock') => {
+    if (!message.trim() || isLoading || !config) return;
+
+    // Create ChatService instance with current config
+    const chatService = new ChatService({
+      localEndpoint: config.localEndpoint,
+      remoteEndpoint: config.remoteEndpoint,
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      headers: config.headers,
+    });
 
     // Add user message to chat
     addMessage(message, 'user');
@@ -153,6 +166,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
         response = await chatService.sendToLocal(message);
         addMessage(response, 'assistant', 'local');
         announce(`New message received from local endpoint`);
+      } else if (endpoint === 'bedrock') {
+        const bedrockResponse = await chatService.sendToBedrockAgent({ message });
+        response = bedrockResponse.response || 'No response received from Bedrock Agent';
+        addMessage(response, 'assistant', 'bedrock');
+        announce(`New research response received from Bedrock Agent`);
       } else {
         response = await chatService.sendToRemote(message);
         addMessage(response, 'assistant', 'remote');
@@ -176,19 +194,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
         setLastFailedRequest(null);
       }
       
-      // Log error for debugging
-      console.error(`Chat error (${endpoint}):`, error);
+
     } finally {
       setLoading(false);
     }
-  }, [isLoading, addMessage, setLoading, setCurrentInput, setError]);
+  }, [isLoading, addMessage, setLoading, setCurrentInput, setError, announce, config]);
 
   const handleSendLocal = useCallback(() => {
     handleSendMessage(currentInput, 'local');
   }, [currentInput, handleSendMessage]);
 
   const handleSendRemote = useCallback(() => {
-    handleSendMessage(currentInput, 'remote');
+    handleSendMessage(currentInput, 'bedrock');
   }, [currentInput, handleSendMessage]);
 
   const handleClear = useCallback(() => {
@@ -211,9 +228,9 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
   }, [setCurrentInput]);
 
   const handleEnterPress = useCallback(() => {
-    // Default to local endpoint when Enter is pressed
-    handleSendLocal();
-  }, [handleSendLocal]);
+    // Default to Research (Bedrock Agent) when Enter is pressed
+    handleSendRemote();
+  }, [handleSendRemote]);
 
   const isInputEmpty = !currentInput.trim();
 
@@ -239,7 +256,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 rounded-full status-online"></div>
               <span className="financial-caption">System Online</span>
@@ -248,6 +265,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
               <div className="financial-caption">Session Active</div>
               <div className="text-xs text-slate-400">{currentTime}</div>
             </div>
+            <UserProfile />
           </div>
         </div>
       </header>
@@ -366,6 +384,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({ className = '' }) => {
             isLoading={isLoading}
           />
         </div>
+      </div>
+      
+      {/* Build Information */}
+      <div className="text-center">
+        <BuildInfo />
       </div>
     </div>
   );

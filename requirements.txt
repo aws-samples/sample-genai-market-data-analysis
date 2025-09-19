@@ -1,6 +1,6 @@
 boto3
 strands-agents
-strands-agents-tools
+strands-agents-tools==0.2.1
 aws-opentelemetry-distro==0.10.0
 bedrock-agentcore
 bedrock-agentcore-starter-toolkit

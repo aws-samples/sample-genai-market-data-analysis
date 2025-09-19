@@ -2,3 +2,24 @@ venv/*
 venv
 .next
 .next/*
+
+# Secrets and environment files
+secrets.env
+.env.local
+.env.production
+*.key
+*.pem
+
+# AWS and deployment files with secrets
+front1/deployment.log
+front1/ecs-task-definition-generated.json
+
+# IDE and OS files
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/

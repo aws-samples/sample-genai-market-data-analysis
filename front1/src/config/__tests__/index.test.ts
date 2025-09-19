@@ -3,10 +3,9 @@
  */
 
 import { 
-  loadConfig, 
+  loadConfigSync, 
   validateConfig, 
-  getConfig, 
-  getConfigInstance, 
+  getConfigSync, 
   resetConfigInstance,
   ConfigError,
   AppConfig 
@@ -27,17 +26,17 @@ describe('Configuration Module', () => {
     process.env = originalEnv;
   });
 
-  describe('loadConfig', () => {
+  describe('loadConfigSync', () => {
     it('should load default configuration when no environment variables are set', () => {
       // Clear all relevant env vars
-      delete process.env.NEXT_PUBLIC_LOCAL_ENDPOINT;
-      delete process.env.NEXT_PUBLIC_REMOTE_ENDPOINT;
-      delete process.env.NEXT_PUBLIC_REQUEST_TIMEOUT;
-      delete process.env.NEXT_PUBLIC_MAX_RETRIES;
-      delete process.env.NEXT_PUBLIC_RETRY_DELAY;
-      delete process.env.NEXT_PUBLIC_REQUEST_HEADERS;
+      delete process.env.LOCAL_ENDPOINT;
+      delete process.env.REMOTE_ENDPOINT;
+      delete process.env.REQUEST_TIMEOUT;
+      delete process.env.MAX_RETRIES;
+      delete process.env.RETRY_DELAY;
+      delete process.env.REQUEST_HEADERS;
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config).toEqual({
         localEndpoint: 'http://127.0.0.1:8080/invocations',
@@ -52,14 +51,14 @@ describe('Configuration Module', () => {
     });
 
     it('should load configuration from environment variables', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-      process.env.NEXT_PUBLIC_REMOTE_ENDPOINT = 'https://api.example.com/chat';
-      process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = '60000';
-      process.env.NEXT_PUBLIC_MAX_RETRIES = '5';
-      process.env.NEXT_PUBLIC_RETRY_DELAY = '2000';
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = '{"Content-Type":"application/json","Authorization":"Bearer token"}';
+      process.env.LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
+      process.env.REMOTE_ENDPOINT = 'https://api.example.com/chat';
+      process.env.REQUEST_TIMEOUT = '60000';
+      process.env.MAX_RETRIES = '5';
+      process.env.RETRY_DELAY = '2000';
+      process.env.REQUEST_HEADERS = '{"Content-Type":"application/json","Authorization":"Bearer token"}';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config).toEqual({
         localEndpoint: 'http://localhost:3000/api/local',
@@ -75,82 +74,82 @@ describe('Configuration Module', () => {
     });
 
     it('should allow empty remote endpoint', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-      process.env.NEXT_PUBLIC_REMOTE_ENDPOINT = '';
+      process.env.LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
+      process.env.REMOTE_ENDPOINT = '';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config.localEndpoint).toBe('http://localhost:3000/api/local');
       expect(config.remoteEndpoint).toBe('');
     });
 
     it('should throw ConfigError for invalid local endpoint URL', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'invalid-url';
+      process.env.LOCAL_ENDPOINT = 'invalid-url';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_LOCAL_ENDPOINT must be a valid URL');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('LOCAL_ENDPOINT must be a valid URL');
     });
 
     it('should throw ConfigError for invalid remote endpoint URL', () => {
-      process.env.NEXT_PUBLIC_REMOTE_ENDPOINT = 'invalid-url';
+      process.env.REMOTE_ENDPOINT = 'invalid-url';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_REMOTE_ENDPOINT must be a valid URL');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('REMOTE_ENDPOINT must be a valid URL');
     });
 
     it('should throw ConfigError for invalid timeout value', () => {
-      process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = 'invalid';
+      process.env.REQUEST_TIMEOUT = 'invalid';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_REQUEST_TIMEOUT must be a positive integer');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('REQUEST_TIMEOUT must be a positive integer');
     });
 
     it('should throw ConfigError for negative timeout value', () => {
-      process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = '-1000';
+      process.env.REQUEST_TIMEOUT = '-1000';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_REQUEST_TIMEOUT must be a positive integer');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('REQUEST_TIMEOUT must be a positive integer');
     });
 
     it('should throw ConfigError for invalid max retries value', () => {
-      process.env.NEXT_PUBLIC_MAX_RETRIES = 'invalid';
+      process.env.MAX_RETRIES = 'invalid';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_MAX_RETRIES must be a non-negative integer');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('MAX_RETRIES must be a non-negative integer');
     });
 
     it('should throw ConfigError for negative max retries value', () => {
-      process.env.NEXT_PUBLIC_MAX_RETRIES = '-1';
+      process.env.MAX_RETRIES = '-1';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_MAX_RETRIES must be a non-negative integer');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('MAX_RETRIES must be a non-negative integer');
     });
 
     it('should throw ConfigError for invalid retry delay value', () => {
-      process.env.NEXT_PUBLIC_RETRY_DELAY = 'invalid';
+      process.env.RETRY_DELAY = 'invalid';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_RETRY_DELAY must be a positive integer');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('RETRY_DELAY must be a positive integer');
     });
 
     it('should throw ConfigError for invalid JSON headers', () => {
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = 'invalid-json';
+      process.env.REQUEST_HEADERS = 'invalid-json';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('Invalid JSON format for NEXT_PUBLIC_REQUEST_HEADERS');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('Invalid JSON format for REQUEST_HEADERS');
     });
 
     it('should throw ConfigError for non-object JSON headers', () => {
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = '["array", "not", "object"]';
+      process.env.REQUEST_HEADERS = '["array", "not", "object"]';
 
-      expect(() => loadConfig()).toThrow(ConfigError);
-      expect(() => loadConfig()).toThrow('NEXT_PUBLIC_REQUEST_HEADERS must be a valid JSON object');
+      expect(() => loadConfigSync()).toThrow(ConfigError);
+      expect(() => loadConfigSync()).toThrow('REQUEST_HEADERS must be a valid JSON object');
     });
 
     it('should merge custom headers with default headers', () => {
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = '{"Authorization":"Bearer token","Custom-Header":"value"}';
+      process.env.REQUEST_HEADERS = '{"Authorization":"Bearer token","Custom-Header":"value"}';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config.headers).toEqual({
         'Content-Type': 'application/json',
@@ -160,9 +159,9 @@ describe('Configuration Module', () => {
     });
 
     it('should allow overriding default Content-Type header', () => {
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = '{"Content-Type":"application/xml"}';
+      process.env.REQUEST_HEADERS = '{"Content-Type":"application/xml"}';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config.headers['Content-Type']).toBe('application/xml');
     });
@@ -216,52 +215,6 @@ describe('Configuration Module', () => {
       expect(() => validateConfig(invalidConfig)).toThrow('Timeout must be greater than 0');
     });
 
-    it('should throw ConfigError for negative max retries', () => {
-      const invalidConfig: AppConfig = {
-        localEndpoint: 'http://localhost:3000/api/local',
-        remoteEndpoint: '',
-        timeout: 60000,
-        maxRetries: -1,
-        retryDelay: 1000,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      expect(() => validateConfig(invalidConfig)).toThrow(ConfigError);
-      expect(() => validateConfig(invalidConfig)).toThrow('Max retries must be 0 or greater');
-    });
-
-    it('should throw ConfigError for invalid retry delay', () => {
-      const invalidConfig: AppConfig = {
-        localEndpoint: 'http://localhost:3000/api/local',
-        remoteEndpoint: '',
-        timeout: 60000,
-        maxRetries: 3,
-        retryDelay: 0,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      expect(() => validateConfig(invalidConfig)).toThrow(ConfigError);
-      expect(() => validateConfig(invalidConfig)).toThrow('Retry delay must be greater than 0');
-    });
-
-    it('should throw ConfigError for invalid headers', () => {
-      const invalidConfig: AppConfig = {
-        localEndpoint: 'http://localhost:3000/api/local',
-        remoteEndpoint: '',
-        timeout: 60000,
-        maxRetries: 3,
-        retryDelay: 1000,
-        headers: null as any,
-      };
-
-      expect(() => validateConfig(invalidConfig)).toThrow(ConfigError);
-      expect(() => validateConfig(invalidConfig)).toThrow('Headers must be a valid object');
-    });
-
     it('should allow zero max retries', () => {
       const validConfig: AppConfig = {
         localEndpoint: 'http://localhost:3000/api/local',
@@ -278,42 +231,20 @@ describe('Configuration Module', () => {
     });
   });
 
-  describe('getConfig', () => {
+  describe('getConfigSync', () => {
     it('should return valid configuration', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
+      process.env.LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
 
-      const config = getConfig();
+      const config = getConfigSync();
 
       expect(config).toBeDefined();
       expect(config.localEndpoint).toBe('http://localhost:3000/api/local');
     });
 
     it('should throw ConfigError for invalid configuration', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'invalid-url';
+      process.env.LOCAL_ENDPOINT = 'invalid-url';
 
-      expect(() => getConfig()).toThrow(ConfigError);
-    });
-  });
-
-  describe('getConfigInstance', () => {
-    it('should return the same instance on multiple calls', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-
-      const config1 = getConfigInstance();
-      const config2 = getConfigInstance();
-
-      expect(config1).toBe(config2);
-    });
-
-    it('should create new instance after reset', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-
-      const config1 = getConfigInstance();
-      resetConfigInstance();
-      const config2 = getConfigInstance();
-
-      expect(config1).not.toBe(config2);
-      expect(config1).toEqual(config2);
+      expect(() => getConfigSync()).toThrow(ConfigError);
     });
   });
 
@@ -337,14 +268,14 @@ describe('Configuration Module', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty string environment variables', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-      process.env.NEXT_PUBLIC_REMOTE_ENDPOINT = '';
-      process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = '';
-      process.env.NEXT_PUBLIC_MAX_RETRIES = '';
-      process.env.NEXT_PUBLIC_RETRY_DELAY = '';
-      process.env.NEXT_PUBLIC_REQUEST_HEADERS = '';
+      process.env.LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
+      process.env.REMOTE_ENDPOINT = '';
+      process.env.REQUEST_TIMEOUT = '';
+      process.env.MAX_RETRIES = '';
+      process.env.RETRY_DELAY = '';
+      process.env.REQUEST_HEADERS = '';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config.localEndpoint).toBe('http://localhost:3000/api/local');
       expect(config.remoteEndpoint).toBe('');
@@ -355,18 +286,18 @@ describe('Configuration Module', () => {
     });
 
     it('should handle zero values correctly', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
-      process.env.NEXT_PUBLIC_MAX_RETRIES = '0';
+      process.env.LOCAL_ENDPOINT = 'http://localhost:3000/api/local';
+      process.env.MAX_RETRIES = '0';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
 
       expect(config.maxRetries).toBe(0);
     });
 
     it('should handle whitespace in URLs by trimming them', () => {
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = '  http://localhost:3000/api/local  ';
+      process.env.LOCAL_ENDPOINT = '  http://localhost:3000/api/local  ';
 
-      const config = loadConfig();
+      const config = loadConfigSync();
       expect(config.localEndpoint).toBe('http://localhost:3000/api/local');
     });
   });

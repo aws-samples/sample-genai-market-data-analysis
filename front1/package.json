@@ -7,20 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:all": "npm run test && npm run test:e2e",
-    "test:comprehensive": "node tests/run-comprehensive-tests.js"
+    "test:comprehensive": "node tests/run-comprehensive-tests.js",
+    "build:analyze": "ANALYZE=true npm run build",
+    "update-aws-sdk": "./scripts/update-aws-sdk.sh",
+    "clean": "rm -rf .next out dist",
+    "precommit": "npm run lint && npm run type-check && npm run test"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-agentcore": "3.890.0",
+    "@aws-sdk/credential-providers": "^3.872.0",
     "axios": "^1.6.0",
     "next": "15.4.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-oidc-context": "^3.3.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

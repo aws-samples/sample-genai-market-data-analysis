@@ -48,10 +48,10 @@ describe('TypeScript Interfaces', () => {
   describe('ChatRequest interface', () => {
     it('should accept valid chat request objects', () => {
       const request: ChatRequest = {
-        prompt: 'What is the weather today?',
+        message: 'What is the weather today?',
       };
 
-      expect(request.prompt).toBe('What is the weather today?');
+      expect(request.message).toBe('What is the weather today?');
     });
   });
 

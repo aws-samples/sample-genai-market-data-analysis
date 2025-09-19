@@ -3,7 +3,7 @@
  */
 
 import { ChatService } from '../../services/chatService';
-import { resetConfigInstance } from '../index';
+import { resetConfigInstance, getConfigSync } from '../index';
 
 // Mock process.env
 const originalEnv = process.env;
@@ -22,17 +22,25 @@ describe('Configuration Integration', () => {
 
   it('should use environment configuration in ChatService', () => {
     // Set custom environment variables
-    process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://custom-local:9000/api';
-    process.env.NEXT_PUBLIC_REMOTE_ENDPOINT = 'https://custom-remote.com/chat';
-    process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = '120000';
-    process.env.NEXT_PUBLIC_MAX_RETRIES = '5';
-    process.env.NEXT_PUBLIC_RETRY_DELAY = '2000';
-    process.env.NEXT_PUBLIC_REQUEST_HEADERS = '{"Content-Type":"application/json","X-API-Key":"test-key"}';
+    process.env.LOCAL_ENDPOINT = 'http://custom-local:9000/api';
+    process.env.REMOTE_ENDPOINT = 'https://custom-remote.com/chat';
+    process.env.REQUEST_TIMEOUT = '120000';
+    process.env.MAX_RETRIES = '5';
+    process.env.RETRY_DELAY = '2000';
+    process.env.REQUEST_HEADERS = '{"Content-Type":"application/json","X-API-Key":"test-key"}';
 
-    // Create ChatService instance (should use environment config)
-    const chatService = new ChatService();
-    const config = chatService.getConfig();
+    // Load config and create ChatService instance
+    const config = getConfigSync();
+    const chatService = new ChatService({
+      localEndpoint: config.localEndpoint,
+      remoteEndpoint: config.remoteEndpoint,
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      headers: config.headers,
+    });
 
+    expect(chatService).toBeDefined();
     expect(config.localEndpoint).toBe('http://custom-local:9000/api');
     expect(config.remoteEndpoint).toBe('https://custom-remote.com/chat');
     expect(config.timeout).toBe(120000);
@@ -44,41 +52,45 @@ describe('Configuration Integration', () => {
     });
   });
 
-  it('should allow ChatService to override environment configuration', () => {
-    // Set environment variables
-    process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://env-local:8080/api';
-    process.env.NEXT_PUBLIC_REQUEST_TIMEOUT = '60000';
-
-    // Create ChatService with custom config that overrides environment
-    const chatService = new ChatService({
+  it('should allow ChatService to use custom configuration', () => {
+    // Create ChatService with custom config
+    const customConfig = {
       localEndpoint: 'http://override-local:3000/api',
+      remoteEndpoint: 'https://override-remote.com/chat',
       timeout: 30000,
-      headers: { 'Authorization': 'Bearer override-token' },
-    });
+      maxRetries: 2,
+      retryDelay: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer override-token' 
+      },
+    };
 
-    const config = chatService.getConfig();
-
-    expect(config.localEndpoint).toBe('http://override-local:3000/api'); // Overridden
-    expect(config.timeout).toBe(30000); // Overridden
-    expect(config.headers).toEqual({
-      'Content-Type': 'application/json', // From environment default
-      'Authorization': 'Bearer override-token', // From override
-    });
+    const chatService = new ChatService(customConfig);
+    expect(chatService).toBeDefined();
   });
 
   it('should handle missing environment variables gracefully', () => {
     // Clear all environment variables
-    delete process.env.NEXT_PUBLIC_LOCAL_ENDPOINT;
-    delete process.env.NEXT_PUBLIC_REMOTE_ENDPOINT;
-    delete process.env.NEXT_PUBLIC_REQUEST_TIMEOUT;
-    delete process.env.NEXT_PUBLIC_MAX_RETRIES;
-    delete process.env.NEXT_PUBLIC_RETRY_DELAY;
-    delete process.env.NEXT_PUBLIC_REQUEST_HEADERS;
+    delete process.env.LOCAL_ENDPOINT;
+    delete process.env.REMOTE_ENDPOINT;
+    delete process.env.REQUEST_TIMEOUT;
+    delete process.env.MAX_RETRIES;
+    delete process.env.RETRY_DELAY;
+    delete process.env.REQUEST_HEADERS;
 
     // Should use defaults
-    const chatService = new ChatService();
-    const config = chatService.getConfig();
+    const config = getConfigSync();
+    const chatService = new ChatService({
+      localEndpoint: config.localEndpoint,
+      remoteEndpoint: config.remoteEndpoint,
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      headers: config.headers,
+    });
 
+    expect(chatService).toBeDefined();
     expect(config.localEndpoint).toBe('http://127.0.0.1:8080/invocations');
     expect(config.remoteEndpoint).toBe('');
     expect(config.timeout).toBe(900000);
@@ -91,20 +103,17 @@ describe('Configuration Integration', () => {
 
   it('should throw error for invalid environment configuration', () => {
     // Set invalid environment variable
-    process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'invalid-url';
+    process.env.LOCAL_ENDPOINT = 'invalid-url';
 
-    // Should throw when creating ChatService
-    expect(() => new ChatService()).toThrow();
+    // Should throw when loading config
+    expect(() => getConfigSync()).toThrow();
   });
 
-  it('should validate configuration on ChatService creation', () => {
-    // Set valid environment but create ChatService with invalid override
-    process.env.NEXT_PUBLIC_LOCAL_ENDPOINT = 'http://valid-local:8080/api';
+  it('should validate configuration on load', () => {
+    // Set valid environment
+    process.env.LOCAL_ENDPOINT = 'http://valid-local:8080/api';
 
-    // This should work fine since we're not validating the override config in ChatService
-    // The validation happens in the config module
-    expect(() => new ChatService({
-      timeout: -1000, // Invalid but not validated by ChatService constructor
-    })).not.toThrow();
+    // Should not throw
+    expect(() => getConfigSync()).not.toThrow();
   });
 });

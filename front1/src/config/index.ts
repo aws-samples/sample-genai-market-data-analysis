@@ -25,9 +25,9 @@ export class ConfigError extends Error {
 const DEFAULT_CONFIG: AppConfig = {
   localEndpoint: 'http://127.0.0.1:8080/invocations',
   remoteEndpoint: '',
-  timeout: 900000, // 15 minutes
-  maxRetries: 3,
-  retryDelay: 1000, // 1 second
+  timeout: 1800000, // 30 minutes
+  maxRetries: 2, // Reduced retries to prevent long waits
+  retryDelay: 2000, // 2 seconds between retries
   headers: {
     'Content-Type': 'application/json',
   },
@@ -104,51 +104,51 @@ function validateUrl(url: string, fieldName: string, required: boolean = true): 
 }
 
 /**
- * Load configuration from environment variables
+ * Load configuration from server-side environment variables (server-side only)
  */
-export function loadConfig(): AppConfig {
+export function loadConfigSync(): AppConfig {
   const errors: string[] = [];
   
   try {
     // Load and validate endpoints
     const localEndpoint = validateUrl(
-      process.env.NEXT_PUBLIC_LOCAL_ENDPOINT || DEFAULT_CONFIG.localEndpoint,
-      'NEXT_PUBLIC_LOCAL_ENDPOINT',
+      process.env.LOCAL_ENDPOINT || DEFAULT_CONFIG.localEndpoint,
+      'LOCAL_ENDPOINT',
       true
     );
     
     const remoteEndpoint = validateUrl(
-      process.env.NEXT_PUBLIC_REMOTE_ENDPOINT || DEFAULT_CONFIG.remoteEndpoint,
-      'NEXT_PUBLIC_REMOTE_ENDPOINT',
+      process.env.REMOTE_ENDPOINT || DEFAULT_CONFIG.remoteEndpoint,
+      'REMOTE_ENDPOINT',
       false
     );
     
     // Load and validate numeric values
     const timeout = parsePositiveInteger(
-      process.env.NEXT_PUBLIC_REQUEST_TIMEOUT || '',
-      'NEXT_PUBLIC_REQUEST_TIMEOUT',
+      process.env.REQUEST_TIMEOUT || '',
+      'REQUEST_TIMEOUT',
       DEFAULT_CONFIG.timeout
     );
     
     const maxRetries = parseNonNegativeInteger(
-      process.env.NEXT_PUBLIC_MAX_RETRIES || '',
-      'NEXT_PUBLIC_MAX_RETRIES',
+      process.env.MAX_RETRIES || '',
+      'MAX_RETRIES',
       DEFAULT_CONFIG.maxRetries
     );
     
     const retryDelay = parsePositiveInteger(
-      process.env.NEXT_PUBLIC_RETRY_DELAY || '',
-      'NEXT_PUBLIC_RETRY_DELAY',
+      process.env.RETRY_DELAY || '',
+      'RETRY_DELAY',
       DEFAULT_CONFIG.retryDelay
     );
     
     // Load and validate headers
     let headers = DEFAULT_CONFIG.headers;
-    const headersEnv = process.env.NEXT_PUBLIC_REQUEST_HEADERS;
+    const headersEnv = process.env.REQUEST_HEADERS;
     if (headersEnv) {
       headers = {
         ...DEFAULT_CONFIG.headers,
-        ...parseJsonSafely(headersEnv, 'NEXT_PUBLIC_REQUEST_HEADERS'),
+        ...parseJsonSafely(headersEnv, 'REQUEST_HEADERS'),
       };
     }
     
@@ -175,6 +175,35 @@ export function loadConfig(): AppConfig {
   
   // This should never be reached due to the try-catch, but TypeScript needs it
   return DEFAULT_CONFIG;
+}
+
+/**
+ * Load configuration from server API (client-side)
+ */
+export async function loadConfig(): Promise<AppConfig> {
+  try {
+    const response = await fetch('/api/config');
+    if (!response.ok) {
+      throw new Error(`Failed to load configuration: ${response.status}`);
+    }
+    
+    const config = await response.json();
+    
+    // Validate the received configuration
+    const validatedConfig = {
+      localEndpoint: validateUrl(config.localEndpoint, 'localEndpoint', true),
+      remoteEndpoint: validateUrl(config.remoteEndpoint, 'remoteEndpoint', false),
+      timeout: config.requestTimeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      headers: config.requestHeaders || DEFAULT_CONFIG.headers,
+    };
+
+    return validatedConfig;
+  } catch (error) {
+    // Fallback to default configuration
+    return DEFAULT_CONFIG;
+  }
 }
 
 /**
@@ -209,11 +238,19 @@ export function validateConfig(config: AppConfig): void {
 }
 
 /**
- * Get the application configuration
- * This is the main export that should be used throughout the application
+ * Get the application configuration (async for client-side)
  */
-export function getConfig(): AppConfig {
-  const config = loadConfig();
+export async function getConfig(): Promise<AppConfig> {
+  const config = await loadConfig();
+  validateConfig(config);
+  return config;
+}
+
+/**
+ * Get the application configuration (sync for server-side)
+ */
+export function getConfigSync(): AppConfig {
+  const config = loadConfigSync();
   validateConfig(config);
   return config;
 }
@@ -221,9 +258,9 @@ export function getConfig(): AppConfig {
 // Export a singleton instance for convenience
 let configInstance: AppConfig | null = null;
 
-export function getConfigInstance(): AppConfig {
+export async function getConfigInstance(): Promise<AppConfig> {
   if (!configInstance) {
-    configInstance = getConfig();
+    configInstance = await getConfig();
   }
   return configInstance;
 }
