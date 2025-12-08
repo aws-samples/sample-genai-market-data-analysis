@@ -73,3 +73,9 @@ The next step is to hook the whole universe of stocks and PySpark to have the ag
 ### Tasks:
 1. Adding PySpark and support using the aws_agents/parquet_agent.py
 2. Adding FDC3 support for the front-end
+
+Security
+See CONTRIBUTING for more information.
+
+License
+This library is licensed under the MIT-0 License. See the LICENSE file.
