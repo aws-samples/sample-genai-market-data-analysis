@@ -1,3 +1,46 @@
+## Application Overview:
+
+This is a financial market analysis application that combines AI agents with real-time market data to provide intelligent investment insights.
+
+Core Architecture:
+
+Backend: Python-based Strands + AWS AgentCore system with multiple specialized AI agents (planner, financial analyst, coder, chart generator, market data analyst, critic)
+
+Frontend: Next.js web application with Cognito authentication
+
+AI Models: Uses Bedrock models (Claude 3.7 Sonnet, Llama 4 Maverick, Nova) for different agent roles
+
+Key Features:
+
+Multi-agent system that collaborates to analyze market data
+
+Real-time market data integration via REST API and Alpaca parquet files
+
+Automated chart generation using Bedrock Code Interpreter
+
+S3-based chart storage with presigned URLs for sharing
+
+Secure authentication via AWS Cognito OIDC
+
+Data Flow:
+
+User submits market analysis request through web UI
+
+Planner agent coordinates other specialized agents
+
+Agents fetch market data, perform analysis, generate charts
+
+Results are compiled and presented to user with visualizations
+
+Deployment Model:
+
+Containerized backend deployed on AWS AgentCore
+
+Frontend deployed on ECS/Fargate/App Runner
+
+Integrated with AWS services (Bedrock, S3, Cognito, Code Interpreter)
+
+
 ## How to run:
 
 ### Installation process for the agents and AgentCore:
