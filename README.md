@@ -96,7 +96,10 @@ npm run build
 source venv/bin/activate
 python app.py
 ````
-
+### Run the agentcore to create and publish the agent
+**inside the main folder**
+````agentcore configure --name main --entrypoint main.py --requirements-file requirements.txt --ecr auto  --execution-role auto --authorizer-config {} --request-header-allowlist no
+````
 
 
 
